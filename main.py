@@ -1,31 +1,49 @@
 def main():
-    with open("books/frankenstein.txt") as f:
-        file_contents = f.read()
+    book = "books/frankenstein.txt"
+    text = file_contents(book)
+    number_of_words = count_words(text)
+    char_dict = count_characters(text)
+    sorted_list = convert_to_list(char_dict)
 
-    # print(file_contents)
-    print("Number of words in Frankenstein:", count_words(file_contents))
-    print("Number of words in Frankenstein:", count_characters(file_contents))
+    print(f"--- Begin report of {book} ---")
+    print(f"{number_of_words} words found in the document")
+    print()
+
+    for item in sorted_list:
+        if not item["char"].isalpha():
+            continue
+        print(f"The '{item['char']}' character was found {item['num']} times")
+
+    print("--- End report ---")
 
 
 def count_words(book):
-    word_count = 0
     words = book.split()
-
-    for word in words:
-        word_count += 1
-
-    return word_count
+    return len(words)
 
 def count_characters(book):
-    lowered = book.lower()
-    number_of_words = {}
-    
-    for character in lowered:
-        if character in number_of_words:
-            number_of_words[character] += 1
+    chars = {}
+    for c in book:
+        lowered = c.lower()
+        if lowered in chars:
+            chars[lowered] += 1
         else:
-            number_of_words[character] = 1
+            chars[lowered] = 1
+    return chars
 
-    return number_of_words
+def sort_on(d):
+    return d["num"]
+
+def convert_to_list(char_dict):
+    sorted_list = []
+    for c in char_dict:
+        sorted_list.append({"char": c, "num": char_dict[c]})
+    sorted_list.sort(reverse=True, key=sort_on)
+    return sorted_list
+
+def file_contents(book):
+    with open(book) as f:
+        contents = f.read()
+    return contents
 
 main()
